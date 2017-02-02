@@ -1,0 +1,51 @@
+------Sudoku Docmentation------  
+
+**Rules**
+
+The given is a grid of 9x9 divided into boxes of 3x3.you need to place digits 1 to 9 in each square such
+that :
+1.digit not repeated in row
+2.digit not repeated in column
+3.digit not repeated in box(3x3)
+
+**How to play**
+
+#start a new game
+to start a newgame :
+ 1.goto menu-->new game
+ 2.choose desired level
+
+#save game
+to save:
+1.goto menu-->save game
+2.enter your name(or any desired name for save)
+
+#load saved game
+1.goto menu-->load
+2.choose the required save game
+
+#restart
+[to reset the entry boxes and timer]
+goto menu-->restart
+
+#solution
+[show solution of sudoku]
+goto menu-->solution
+
+#submit
+[checks submitted solution]
+click submit button below timer widget
+
+
+**Important Notice**
+This is our first attempt towards a full gui based application and a complex sudoku solving algorithm.Sometimes it
+can take upto 30 seconds.If it hang for more than a minute then kindly close it.
+I hope you would enjoy our little project and will keep encouraging us in our efforts.
+Images are subject to copyright and we hold no rights regarding their redistribution.
+Source of images: google images
+Conversion to gif:zamzar.com
+Tkinter advanced widgets:effbot.org
+Source of sudoku solving techniques:Peter Norvig(norvig.com)
+
+Developed by:
+Arpan Jain
