@@ -2,7 +2,7 @@ from Tkinter import *
 import math,pickle,random,tkMessageBox,tkSimpleDialog
 class Sudoku:
     #class dealing with solving of sudoku
-    def __init__(self,sud_l='400000805030000000000700000020000060000080400000010000000603070500200000104000000'):
+    def __init__(self,sud_l):
         #Initialises the sudoku and prepares squares
         self.sudoku=list(sud_l)
         alpha='ABCDEFGHI'
@@ -253,7 +253,8 @@ class Controller(Sudoku,Grid):
     def Window(self):
         #formats window and loads images
         root.wm_title("SUDOKU")
-        root.state("zoomed")
+        root.minsize(width=1366,height=768)
+        root.maxsize(width=1366,height=768)
         self.root.wm_iconbitmap(r'img\icon.ico')
         self.back=PhotoImage(file=base_img)
         self.canv=Canvas(self.root,height=766,width=1366)
