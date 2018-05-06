@@ -19,6 +19,15 @@ A Tkinter based application for generating and solving Sudokus
 Refer the below link:
 http://www.tkdocs.com/tutorial/install.html
 
+## Instructions to Run
+### Windows
+Double click to execute
+
+### Mac/Unix
+**Method 1:** Run the code using command `python Sudoku.py`  
+**Method 2:** Alternatively on Unix, you can use command `./Sudoku.py`  
+          Note: You might need to apply executing permissions using `chmod +x Sudoku.py`
+
 ## Author
 ### Arpan Jain
 Here are some links to connect
