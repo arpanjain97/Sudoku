@@ -1,6 +1,8 @@
 # Sudoku
 A Tkinter based application for generating and solving Sudokus
 
+![screenshot](https://github.com/arpanjain97/Sudoku/blob/master/screenshot.png)
+
 ## Features
 1. Adaptive UI
 2. Huge Bank of Hard Sudokus(~50k)

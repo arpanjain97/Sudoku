@@ -261,7 +261,7 @@ class Controller(Sudoku,Grid):
         #formats window and loads images
         root.wm_title("SUDOKU")
         root.minsize(width=1366,height=768)
-        root.maxsize(width=1366,height=768)
+        #root.maxsize(width=1366,height=768)
         self.root.call('wm', 'iconphoto', self.root._w, self.base_icon)
         self.back=PhotoImage(file = os.path.join(images_folder, base_img))
         self.canv=Canvas(self.root,height=766,width=1366)
@@ -296,7 +296,7 @@ class Controller(Sudoku,Grid):
         self.root.destroy()
     def fullscreen(self):
         #fullscreen func
-        root.wm_attributes("-fullscreen",True)
+        self.root.wm_attributes("-fullscreen",True)
     def help_d(self,event=None):
         #shows help document
         try:
@@ -430,6 +430,6 @@ base_img = 'back.gif'
 base_icon_img = 'icon.gif'
 
 # Main
-root=Tk()
+root = Tk()
 Controller(root)
 root.mainloop()
