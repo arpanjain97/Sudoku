@@ -1,12 +1,17 @@
+#!/usr/bin/env python
+
 from Tkinter import *
-import math,pickle,random,tkMessageBox,tkSimpleDialog
+import tkMessageBox, tkSimpleDialog
+import math, random
+import pickle, os.path
+
 class Sudoku:
     #class dealing with solving of sudoku
     def __init__(self,sud_l):
         #Initialises the sudoku and prepares squares
         self.sudoku=list(sud_l)
         alpha='ABCDEFGHI'
-        digit='123456789'
+        digit= '123456789'
         self.sqr=self.cross(alpha,digit)
         self.units=([self.cross(alpha,col) for col in digit]+
                [self.cross(row,digit) for row in alpha]+
@@ -171,7 +176,7 @@ class Load():
         self.content=list()
     def load_dir(self):
         #loads from question directory
-        fil=open(r'data\sudoku.db','rb')
+        fil=open(os.path.join(data_folder, 'sudoku.db'), 'rb')
         suds=fil.readlines()
         chosen=random.choice(suds)
         fil.close()
@@ -179,19 +184,19 @@ class Load():
     def load_sav(self,username):
         #loads from user saves
         try:
-            fil=self.fil_open(r'data\user_'+username+'.sav')
+            fil=self.fil_open('user_'+username+'.sav')
             obj=pickle.load(fil)
             fil.close()
             return obj
         except IOError:
             pass
-    def fil_open(self,loc):
+    def fil_open(self, loc):
         try:
-            fil=open(loc,'rb')
+            fil=open(os.path.join(data_folder, loc), 'rb')
             return fil
-        except IOError:
-            tkMessageBox.showwarning("Open Directory","Unable to open Directory location: "+loc+".\nEither it doesnt exist or is corrupt.")
-            raise 
+        except IOError as e:
+            tkMessageBox.showwarning("Open Directory","Unable to open Directory location: "+loc+"\nEither it doesnt exist or is corrupt."+str(e))
+            raise
 class Save():
     #create a saving object and save it in data directory
     def __init__(self):
@@ -200,10 +205,10 @@ class Save():
         self.savlist=[ques,ans,state,timer]
     def save_act(self,username,ques,ans,state,timer):
         self.list_enum(ques,ans,state,timer)
-        fil=open(r'data\user_'+username+'.sav','wb')
+        fil=open(os.path.join(data_folder, 'user_'+username+'.sav'),'wb')
         pickle.dump(self.savlist,fil)
         fil.close()
-        fil=open(r'data\users.db','ab')
+        fil=open(os.path.join(data_folder, 'users.db'), 'ab')
         fil.write(username+'\n')
         fil.close()
 class Loading:
@@ -245,24 +250,26 @@ class Controller(Sudoku,Grid):
     def __init__(self,root):
         #creates main window of programme and its menu
         self.root=root
+        self.base_icon = Image("photo", file = os.path.join(images_folder, base_icon_img))
         self.load_conn=Load()
         self.save_conn=Save()
         self.lvl_map={1:8,2:4,3:2}
         root.after(2,self.add_widgets)
+        root.protocol("WM_DELETE_WINDOW", self.s_exit)
         self.Window()
     def Window(self):
         #formats window and loads images
         root.wm_title("SUDOKU")
         root.minsize(width=1366,height=768)
         root.maxsize(width=1366,height=768)
-        self.root.wm_iconbitmap(r'img\icon.ico')
-        self.back=PhotoImage(file=base_img)
+        self.root.call('wm', 'iconphoto', self.root._w, self.base_icon)
+        self.back=PhotoImage(file = os.path.join(images_folder, base_img))
         self.canv=Canvas(self.root,height=766,width=1366)
         self.canv.place(x=0,y=0)
         self.canv.create_image(0,0,image=self.back,anchor='nw')
         self.menubar=Menu(self.root)
         self.root.config(menu=self.menubar)
-        self.title=PhotoImage(file=r'img\title.gif')
+        self.title=PhotoImage(file = os.path.join(images_folder, 'title.gif'))
         self.canv.create_image(750,65,image=self.title,anchor='nw')
     def add_widgets(self):
         #adds the required widgets to window
@@ -293,9 +300,9 @@ class Controller(Sudoku,Grid):
     def help_d(self,event=None):
         #shows help document
         try:
-            doc=self.load_conn.fil_open(r"data\helpdoc.dat")
+            doc=self.load_conn.fil_open('helpdoc.dat')
             master=Toplevel()
-            master.wm_iconbitmap(r'img\icon.ico')
+            self.root.call('wm', 'iconphoto', master._w, self.base_icon)
             scrollbar = Scrollbar(master)
             scrollbar.pack(side=RIGHT, fill=Y)
             text = Text(master,wrap=WORD ,yscrollcommand=scrollbar.set)
@@ -331,7 +338,7 @@ class Controller(Sudoku,Grid):
         fontu=(basefont,30,basestyle)
         self.lvl = IntVar()
         self.master=Toplevel(bg=theme_color)
-        self.master.wm_iconbitmap(r'img\icon.ico')
+        self.root.call('wm', 'iconphoto', self.master._w, self.base_icon)
         Radiobutton(self.master, text="Easy   ",fg='green',bg=theme_color,offrelief='flat',variable=self.lvl,indicatoron=0,font=fontu,value=1,command=self.create).pack(anchor=W)
         Radiobutton(self.master, text="Medium",fg='yellow',bg=theme_color,offrelief='flat',variable=self.lvl,indicatoron=0,font=fontu,value=2,command=self.create).pack(anchor=W)
         Radiobutton(self.master, text="Hard   ",fg='red3',bg=theme_color,offrelief='flat',variable=self.lvl,indicatoron=0,font=fontu,value=3,command=self.create).pack(anchor=W)
@@ -359,15 +366,16 @@ class Controller(Sudoku,Grid):
     def loader(self):
        #creates menu to load sudoku from user saved sudokus
        try:
-           fil=self.load_conn.fil_open(r"data\users.db")
+           fil=self.load_conn.fil_open('users.db')
            self.load_win=Toplevel()
-           self.load_win.config(bg='dodgerblue')
-           self.load_opt=Listbox(self.load_win,height=0,width=10,relief='flat',font=(basefont,30,basestyle),bg=theme_color,fg='white')
+           self.root.call('wm', 'iconphoto', self.load_win._w, self.base_icon)
+           self.load_win.config(bg = 'dodgerblue')
+           self.load_opt=Listbox(self.load_win, height = 0, width = 10, relief = 'flat', font = (basefont, 30, basestyle), bg = theme_color, fg = 'white')
            self.load_opt.pack()
            self.saved=fil.readlines()
            for i in self.saved:
-               self.load_opt.insert(END,i)
-           Button(self.load_win,bg=theme_color,relief='flat',text="LOAD",font=(basefont,30,basestyle),command=self.load,fg='purple4').pack()
+               self.load_opt.insert(END,i[:-1])
+           Button(self.load_win, bg = theme_color, relief = 'flat', text = "LOAD", font = (basefont, 30, basestyle), command = self.load, fg = 'purple4').pack()
            fil.close()
        except:
             pass
@@ -380,14 +388,14 @@ class Controller(Sudoku,Grid):
         self.ans=data[1]
         self.grid.clrscr()
         self.grid.show(self.ques)
-        self.grid.show(data[2],'ans')
+        self.grid.show(data[2], 'ans')
         self.timer.stop()
         self.timer.adj(data[3])
     def save(self):
         #saving func
         state=self.grid.state()
-        nam=tkSimpleDialog.askstring("Save Game","Entry name",initialvalue="< BLANK >")
-        self.save_conn.save_act(nam,self.ques,self.ans,state,self.timer.get())
+        nam=tkSimpleDialog.askstring('Save Game', 'Entry name', initialvalue = '< BLANK >')
+        self.save_conn.save_act(nam, self.ques, self.ans, state, self.timer.get())
     def restart(self):
         #func to restart loaded sudoku
         self.grid.clrscr()
@@ -406,16 +414,22 @@ class Controller(Sudoku,Grid):
         scr=self.grid.state()
         sud=Sudoku(scr)
         if sud.check():
-            tkMessageBox.showwarning("Correct","Answer is correct")
+            tkMessageBox.showwarning('Correct', 'Answer is correct')
         else:
-            tkMessageBox.showwarning("Incorrect","Answer is either incorrect or incomplete")
+            tkMessageBox.showwarning('Incorrect', 'Answer is either incorrect or incomplete')
             self.timer.start()
-###MAIN###
-basefont="Comic Sans Ms"
-basestyle='bold'
-theme_color='dodgerblue'
-theme_color2='grey70'
-base_img=r'img\back.gif'
+
+# Global Settings
+images_folder = os.path.join('img')
+data_folder = os.path.join('data')
+basefont = 'Comic Sans Ms'
+basestyle = 'bold'
+theme_color = 'dodgerblue'
+theme_color2 = 'grey70'
+base_img = 'back.gif'
+base_icon_img = 'icon.gif'
+
+# Main
 root=Tk()
-Main_obj=Controller(root)
+Controller(root)
 root.mainloop()
